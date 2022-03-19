@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="welcome">
+    <h1 class="title">ようこそ投稿ブログへ</h1>
+    <p class="subtitle">あなたの気になったニュースを投稿しましょう</p>
+    <a class="btn btn-primary" href="{% url 'create' %}">記事を投稿する</a>
+</div>
+<div class="container">
+<table class="table">
+    <thead>
+        <th>投稿者</th>
+        <th>投稿日</th>
+        <th>タイトル</th>
+        <th>評価数</th>
+    </thead>
+    <tbody>
+    {% for item in object_list %}
+        <tr>
+            <th>{{ item.author }}</th>
+            <th>{{ item.created_at }}</th>
+            <th><a href="{% url 'detail' item.pk %}">{{ item.title }}</a></th>
+            <th>{{ item.useful_review }}</th>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>    
+</div>
+{% endblock content %} 

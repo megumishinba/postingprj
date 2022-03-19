@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.contrib.auth import authenticate,login,logout
 from .models import PostingModel
-from django.views.generic import CreateView
+from django.views.generic import CreateView,DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 
@@ -28,7 +28,7 @@ def loginview(request):
         user = authenticate(request, username=username_data, password=password_data)
         if user is not None:
             login(request, user)
-            return redirect('list')
+            return redirect('top')
         else:
             return redirect('login')
     return render(request, 'login.html')
@@ -47,7 +47,7 @@ class CreateClass(CreateView):
     template_name='create.html'
     model=PostingModel
     fields=('title','content','author','images','evaluation')
-    succes_url=reverse_lazy('list')
+    success_url=reverse_lazy('top')
 
 def logoutview(request):
     logout(request)
@@ -57,18 +57,24 @@ def evaluationview(request,pk):
     post=PostingModel.objects.get(pk=pk)
     author_name=request.user.get_username() + str(request.user.id)
     if author_name in post.useful_review_record:
-        return redirect('list')
+        return redirect('top')
 
     else:
         post.useful_review=post.useful_review + 1
         post.useful_review_record=post.useful_review_record+author_name
         post.save()
-        return redirect('list')
+        return redirect('top')
 
 @login_required
 def top(request):
     object_list=PostingModel.objects.all()
     return render(request,'top.html',{'object_list':object_list})
+
+class DeleteClass(DeleteView):
+    template_name='delete.html'
+    model=PostingModel
+    success_url=reverse_lazy('top')
+
 
 
 
